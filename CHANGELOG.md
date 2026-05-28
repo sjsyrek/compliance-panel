@@ -2,6 +2,15 @@
 
 All notable changes to the compliance-panel plugin are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] — 2026-05-28
+
+Documentation-only patch. The README "Slash command" section and the SKILL.md "What the user sees" invocation note now show the actual namespaced form of the slash command (`/compliance-panel:compliance-panel`) instead of the bare form. Claude Code namespaces every plugin slash command as `/<plugin>:<command>` to avoid collisions across third-party plugins; the bare `/compliance-panel` form (advertised in 0.1.0) was never a valid invocation.
+
+### Fixed
+
+- **README**: `/compliance-panel [scope-path]` → `/compliance-panel:compliance-panel [scope-path]` in the Slash command section and example.
+- **SKILL.md**: same fix in the "What the user sees" invocation note.
+
 ## [0.1.0] — 2026-05-28
 
 Initial release. Multi-agent EU digital compliance review modeled on the parallel-fan-out + cross-correlation pattern from `red-team` (sibling plugin in the same marketplace). Independent specialist assessor agents per regulation; the Panel Chair synthesizes findings into a prioritised gap report with concrete remediation guidance.
