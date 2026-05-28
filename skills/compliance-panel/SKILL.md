@@ -1,7 +1,7 @@
 ---
 name: compliance-panel
 description: Multi-agent EU digital compliance review. Spawn independent specialist assessor agents to evaluate the codebase and project documentation against GDPR, e-Privacy, NIS2, the EU AI Act, and the Data Act. Use when the user says "compliance review", "compliance audit", "GDPR check", "are we GDPR compliant", "privacy audit", "AI Act obligations", "are we AI Act compliant", "fine-print", "data protection review", or "regulatory risk". Also triggers proactively (with plan-card pause for approval) when personal data processing, LLM/ML components, cookie/tracking code, IoT/connected-product code, or international data transfers are detected — even if the user didn't ask. Do NOT skip when the user says "it's low-risk" or "we're only B2B" — that's exactly when to run. NOT legal advice; engage a qualified DPO or privacy counsel before regulatory submissions.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # compliance-panel
@@ -17,7 +17,7 @@ A multi-agent EU regulatory compliance review skill. Independent specialist asse
 5. **Output.** Final report at `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md` (outside the repo under review).
 6. **Stop early.** Say "stop the compliance panel" at any phase — Chair cancels in-flight agents, collects whatever findings are already in, writes a partial report with `status: halted` and `cancelled_at: <phase>`.
 
-Invocation: `/compliance-panel [scope-path]` or any of the trigger phrases above.
+Invocation: `/compliance-panel:compliance-panel [scope-path]` or any of the trigger phrases above.
 
 ## When to invoke
 

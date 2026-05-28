@@ -60,10 +60,10 @@ Per-assessor methodology lives in [`skills/compliance-panel/references/agents/`]
 ## Slash command
 
 ```
-/compliance-panel [scope-path]
+/compliance-panel:compliance-panel [scope-path]
 ```
 
-Optional `scope-path` argument narrows the review (e.g., `/compliance-panel src/api`). Without it, the entire repo is in scope. The recon still reads `CLAUDE.md`, package manifests, and any `privacy-policy.md` / `dpa.md` / `ropa.md` from the repo root regardless — regulatory scope crosses subtree boundaries.
+Optional `scope-path` argument narrows the review (e.g., `/compliance-panel:compliance-panel src/api`). Without it, the entire repo is in scope. The recon still reads `CLAUDE.md`, package manifests, and any `privacy-policy.md` / `dpa.md` / `ropa.md` from the repo root regardless — regulatory scope crosses subtree boundaries.
 
 ## Output location
 
