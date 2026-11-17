@@ -1,6 +1,7 @@
 ---
 name: compliance-panel
-description: Multi-agent EU digital compliance review. Spawn independent specialist assessor agents to evaluate the codebase and project documentation against GDPR, e-Privacy, NIS2, the EU AI Act, and the Data Act. Use when the user says "compliance review", "compliance audit", "GDPR check", "are we GDPR compliant", "privacy audit", "AI Act obligations", "are we AI Act compliant", "fine-print", "data protection review", or "regulatory risk". Also triggers proactively (with plan-card pause for approval) when personal data processing, LLM/ML components, cookie/tracking code, IoT/connected-product code, or international data transfers are detected — even if the user didn't ask. Do NOT skip when the user says "it's low-risk" or "we're only B2B" — that's exactly when to run. NOT legal advice; engage a qualified DPO or privacy counsel before regulatory submissions.
+description: Multi-agent EU digital compliance review. Spawn independent specialist assessor agents to evaluate the codebase and project documentation against GDPR, e-Privacy, NIS2, the EU AI Act, and the Data Act. Use when the user says "compliance review", "compliance audit", "GDPR check", "are we GDPR compliant", "privacy audit", "AI Act obligations", "are we AI Act compliant", "fine-print", "data protection review", or "regulatory risk". Also offer it proactively (plan card first, never run unprompted) when personal data processing, LLM/ML components, cookie/tracking code, IoT/connected-product code, or international data transfers are detected; "low-risk" and "B2B-only" are not reasons to skip the offer. NOT legal advice; engage a qualified DPO or privacy counsel before regulatory submissions.
+argument-hint: [scope-path]
 version: 0.1.1
 ---
 
@@ -11,13 +12,13 @@ A multi-agent EU regulatory compliance review skill. Independent specialist asse
 ## What the user sees
 
 1. **Plan card.** Before any agent spawns, the Chair shows a one-screen card: scope, roster (always-on plus opt-in seats with rationale for each opt-in), per-seat model, rough token/wall-clock budget. Reply `go`, `add dpia-assessor`, `drop data-act-assessor`, `narrow scope to <path>`, or `abort`.
-2. **Handshake status.** After spawn: `HANDSHAKE: 6/6 ok | started=[...] | failed=[]`. Spawn health visible, not inferred.
+2. **Spawn status.** After spawn: `SPAWN: 6/6 ok | started=[...] | failed=[]`. Spawn health visible, not inferred.
 3. **Silent assessment phase.** Assessors run in parallel with no inter-agent communication. The Chair surfaces per-agent progress notifications.
 4. **Report preview.** Before any file is written, the Chair posts the draft report to chat. Reply `save`, `amend <note>`, or `discard`.
 5. **Output.** Final report at `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md` (outside the repo under review).
-6. **Stop early.** Say "stop the compliance panel" at any phase — Chair cancels in-flight agents, collects whatever findings are already in, writes a partial report with `status: halted` and `cancelled_at: <phase>`.
+6. **Stop early.** Say "stop the compliance panel" at any phase — Chair stops in-flight agents, collects whatever findings are already in, writes a partial report with `status: halted` and `cancelled_at: <phase>`.
 
-Invocation: `/compliance-panel:compliance-panel [scope-path]` or any of the trigger phrases above.
+Invocation: `/compliance-panel:compliance-panel [scope-path]` or any of the trigger phrases above. With no scope, the whole repository at the current working directory is in scope. With a path, narrow the assessment fan-out to that subtree — but still read `CLAUDE.md`, package manifests, and compliance documentation (`privacy-policy.md`, `dpa.md`, `ropa.md`, `dpia.md`, cookie policy, etc.) from the repo root, since regulatory scope crosses subtree boundaries. Start at Phase 0 either way; an explicit invocation doesn't skip the plan card.
 
 ## When to invoke
 
@@ -50,7 +51,7 @@ Opt-in:     [list with one-line rationale per seat]
                  (large-scale special-category data in src/health/)
             e.g. bcr-assessor — intra-group transfer to US affiliate
                  detected in config/processors.yaml
-Models:     [per-seat — Opus default for synthesis-heavy, Sonnet for analytical]
+Models:     [per-seat model + effort — Opus for synthesis-heavy seats, Sonnet for analytical]
 Budget:     ~Nk tokens, ~M minutes wall-clock
 Output:     ~/.claude/compliance-panel/<date>-<slug>/report.md
 
@@ -86,7 +87,7 @@ Brief format: see `references/recon-template.md`.
 
 ## Phase 2 — Assessment fan-out (parallel)
 
-Spawn all selected assessors simultaneously in **one multi-tool-call message** via `Agent(... run_in_background: true)`. Each assessor receives:
+Spawn all selected assessors in one message, one `Agent(subagent_type: "general-purpose", model: …, effort: …, description: "compliance-panel: <slug>", prompt: …)` call per assessor. Subagents run in the background by default and their results arrive as notifications. Do not give assessors a `name`: when agent teams are enabled, a named spawn becomes a teammate that can message other agents, which breaks the independence below. Each assessor receives:
 
 - Its **role brief** loaded from `references/agents/<slug>.md`
 - A `Read` instruction for the recon brief at `~/.claude/compliance-panel/<slug>/recon.md`
@@ -95,7 +96,7 @@ Spawn all selected assessors simultaneously in **one multi-tool-call message** v
 - For `ai-act-assessor`: an additional pointer to `references/ai-act-risk-classifier.md`
 - Full tool access (file reads, bash, dependency manifests)
 
-**Critical**: Assessors do not communicate during this phase. Independence is the whole point. Shared context contaminates findings — the Chair must not let the `gdpr-assessor`'s framing leak into the `eprivacy-assessor`'s analysis.
+Assessors do not communicate during this phase. Independence is the whole point. Shared context contaminates findings — the Chair must not let the `gdpr-assessor`'s framing leak into the `eprivacy-assessor`'s analysis.
 
 ### Finding schema
 
@@ -144,12 +145,12 @@ A clean check is a real result. Omission is ambiguous — did no assessor check 
 
 See `references/severity-guide.md` for calibration examples per regulation. Severity is about **enforcement risk and effort to fix**, not about blame.
 
-## Phase 2.5 — Handshake verify
+## Phase 2.5 — Spawn check
 
-After spawn, count incoming acknowledgements. Emit:
+Each `Agent` call returns either an agent ID or an error. Emit:
 
 ```
-HANDSHAKE: N/N ok | started=[...] | failed=[...]
+SPAWN: N/N ok | started=[...] | failed=[...]
 ```
 
 For any failed assessor:
@@ -199,7 +200,7 @@ The path is **per-user artifact space, outside the repo under review**. Complian
 
 User says "stop the compliance panel" at any phase:
 
-1. Broadcast cancel to all in-flight agents
+1. Stop each still-running assessor with `TaskStop`
 2. Collect whatever findings are already in
 3. Skip cross-correlation (or run an abbreviated pass on whatever is collected)
 4. Write partial report with frontmatter `status: halted`, `cancelled_at: <phase>`, `cancellation_reason: user_request`

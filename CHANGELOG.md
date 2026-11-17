@@ -2,6 +2,20 @@
 
 All notable changes to the compliance-panel plugin are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Assessors spawn as unnamed background subagents** — `Agent(model: …, effort: …, prompt: …)`, one per assessor, in one message. `run_in_background` is no longer an `Agent` parameter (background is the default). The skill now says not to name assessors: with agent teams enabled, a named spawn becomes a teammate that can message other agents.
+- **Phase 2.5 is a spawn check, not a handshake.** Subagents don't message back; each `Agent` call returns an ID or an error. Status line is now `SPAWN: N/N ok | started=[...] | failed=[...]`; retry-once is unchanged.
+- **"Stop the compliance panel" stops each in-flight assessor with `TaskStop`** instead of a broadcast.
+- **Plan card shows effort as well as model per seat.**
+- **Proactive triggering is an offer, stated plainly.** The description no longer tells Claude to run "even if the user didn't ask"; it offers the plan card when regulated processing is detected and never runs unprompted (which the body already required).
+
+### Removed
+
+- **`commands/compliance-panel.md`.** The skill is already invocable as `/compliance-panel:compliance-panel`, so the command was a second copy listed alongside it. Its `argument-hint` and scope-narrowing rules moved into `SKILL.md`. The invocation is unchanged.
+
 ## [0.1.1] — 2026-05-28
 
 Documentation-only patch. The README "Slash command" section and the SKILL.md "What the user sees" invocation note now show the actual namespaced form of the slash command (`/compliance-panel:compliance-panel`) instead of the bare form. Claude Code namespaces every plugin slash command as `/<plugin>:<command>` to avoid collisions across third-party plugins; the bare `/compliance-panel` form (advertised in 0.1.0) was never a valid invocation.
