@@ -1,0 +1,12 @@
+schema_version: "1.0"
+name: 03-neg-typo
+description: Should NOT fire. A doc-only wording change in a repo that processes personal data must not invoke compliance-panel.
+tags: [tier1, negative]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: "In CLAUDE.md, change \"Customer support portal\" to \"Customer help portal\". Nothing else."
+  max_turns: 10
+  timeout_seconds: 300
+  allowed_tools: [Skill, Read, Edit, Glob, Grep]
+runs: 3

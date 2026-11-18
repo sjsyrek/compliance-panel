@@ -1,0 +1,12 @@
+schema_version: "1.0"
+name: 01-trigger-plan-card
+description: A trigger phrase invokes compliance-panel, which stops at the Phase 0 plan card without spawning assessors.
+tags: [tier1, plan-card]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: "Are we GDPR compliant? Do a compliance review of this repo."
+  max_turns: 30
+  timeout_seconds: 900
+  allowed_tools: [Skill, Read, Glob, Grep, Bash]
+runs: 3

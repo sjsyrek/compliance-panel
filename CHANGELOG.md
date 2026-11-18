@@ -4,6 +4,10 @@ All notable changes to the compliance-panel plugin are documented here. The form
 
 ## [Unreleased]
 
+### Added
+
+- **Eval suite** (`evals/`) for `claude plugin eval`: plan-card, scoped slash command and should-not-fire cases, plus one end-to-end three-assessor run on a generated support-ticket app with planted gaps. `evals/results/` is gitignored. See `evals/README.md`.
+
 ### Changed
 
 - **Assessors spawn as unnamed background subagents** — `Agent(model: …, effort: …, prompt: …)`, one per assessor, in one message. `run_in_background` is no longer an `Agent` parameter (background is the default). The skill now says not to name assessors: with agent teams enabled, a named spawn becomes a teammate that can message other agents.

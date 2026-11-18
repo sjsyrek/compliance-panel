@@ -1,0 +1,13 @@
+schema_version: "1.0"
+name: 10-e2e-small-roster
+description: End-to-end run with a pre-approved three-seat roster. Assessors spawn unnamed, the spawn check is reported, planted gaps are found with article citations, and the run stops at the report preview.
+tags: [tier2, e2e]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: |
+    Run a compliance review of this repo. The plan is pre-approved, so don't wait at the plan card: roster is exactly gdpr-assessor, eprivacy-assessor and ai-act-assessor, all on Sonnet at low effort, scope is the whole repo. Run recon, the assessment fan-out, and cross-correlation, then show me the draft report preview and stop there.
+  max_turns: 80
+  timeout_seconds: 2400
+  allowed_tools: [Skill, Read, Glob, Grep, Bash, Write, Agent, TaskStop]
+runs: 1
