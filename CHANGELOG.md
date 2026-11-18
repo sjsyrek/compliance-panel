@@ -12,6 +12,10 @@ All notable changes to the compliance-panel plugin are documented here. The form
 - **Plan card shows effort as well as model per seat.**
 - **Proactive triggering is an offer, stated plainly.** The description no longer tells Claude to run "even if the user didn't ask"; it offers the plan card when regulated processing is detected and never runs unprompted (which the body already required).
 
+### Fixed
+
+- **Plan card no longer lists suspected gaps, and shows effort per seat.** The Chair listed "early signals" and "what the panel will look hardest at" before any assessor ran, pre-empting the independent assessment phase; and its Models line gave no effort levels. Phase 0 now says the card describes scope, seats and opt-in reasons only, and the template shows one `model / effort` line per seat. Found by the new eval suite.
+
 ### Removed
 
 - **`commands/compliance-panel.md`.** The skill is already invocable as `/compliance-panel:compliance-panel`, so the command was a second copy listed alongside it. Its `argument-hint` and scope-narrowing rules moved into `SKILL.md`. The invocation is unchanged.

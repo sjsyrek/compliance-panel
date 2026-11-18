@@ -51,12 +51,16 @@ Opt-in:     [list with one-line rationale per seat]
                  (large-scale special-category data in src/health/)
             e.g. bcr-assessor — intra-group transfer to US affiliate
                  detected in config/processors.yaml
-Models:     [per-seat model + effort — Opus for synthesis-heavy seats, Sonnet for analytical]
+Models:     [one line per seat: model / effort — e.g.
+              gdpr-assessor      Opus   / high
+              eprivacy-assessor  Sonnet / medium]
 Budget:     ~Nk tokens, ~M minutes wall-clock
 Output:     ~/.claude/compliance-panel/<date>-<slug>/report.md
 
 Reply: go | add <seat> | drop <seat> | narrow scope to <path> | abort
 ```
+
+The plan card describes scope, seats and the reason for each opt-in — not a list of suspected gaps or "early signals", even obvious ones. Finding gaps is the assessors' job; listing suspects here pre-empts the independent assessment phase and, if they reach `recon.md`, anchors every assessor on the Chair's guesses.
 
 User commands:
 - `go` — proceed to Phase 1
