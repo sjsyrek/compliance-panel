@@ -2,7 +2,7 @@
 name: compliance-panel
 description: Multi-agent EU digital compliance review. Spawn independent specialist assessor agents to evaluate the codebase and project documentation against GDPR, e-Privacy, NIS2, the EU AI Act, and the Data Act. Use when the user says "compliance review", "compliance audit", "GDPR check", "are we GDPR compliant", "privacy audit", "AI Act obligations", "are we AI Act compliant", "fine-print", "data protection review", or "regulatory risk". Also offer it proactively (plan card first, never run unprompted) when personal data processing, LLM/ML components, cookie/tracking code, IoT/connected-product code, or international data transfers are detected; "low-risk" and "B2B-only" are not reasons to skip the offer. NOT legal advice; engage a qualified DPO or privacy counsel before regulatory submissions.
 argument-hint: [scope-path]
-version: 0.1.1
+version: 0.2.0
 ---
 
 # compliance-panel
