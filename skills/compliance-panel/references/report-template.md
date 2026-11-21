@@ -2,7 +2,7 @@
 
 The Chair writes the final report from this template after Phase 3 (cross-correlation). Output path: `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md`.
 
-**Preview before write.** Post the draft to chat as the rendered markdown followed by `Reply: save | amend <note> | discard`. Do not write the file until the user replies `save`.
+**Preview before write.** Post the draft to chat in the preview shape from `SKILL.md` (rendered markdown, no code fence, ending with `Reply:` `save` | `amend <note>` | `discard`). Do not write the file until the user replies `save`.
 
 The **Disclaimer** block at the bottom is mandatory and never abbreviated.
 

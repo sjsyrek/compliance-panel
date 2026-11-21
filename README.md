@@ -13,11 +13,36 @@ Compliance Panel spawns each regulatory assessor as an **independent Claude agen
 0. **Plan card (you confirm before anything spawns).** The Chair shows a one-screen card: scope, roster (always-on plus opt-in seats with rationale), per-seat model, rough token/wall-clock budget. You reply `go`, `add dpia-assessor`, `drop data-act-assessor`, `narrow scope to src/api`, or `abort`.
 1. **Recon (Chair, single context).** The Chair scans the project: processing activities, data categories, AI components, connected devices, data transfers, user base, existing compliance documentation. The recon brief lands at `~/.claude/compliance-panel/<slug>/recon.md`. Every spawn prompt points to that path, so the Chair writes the recon once instead of inlining it into each spawn.
 2. **Assessment fan-out (parallel).** In one message the Chair spawns every selected assessor as an unnamed background subagent (`Agent(model: …, effort: …, prompt: …)`). Each receives only its own role brief and the recon — **no inter-agent communication during the assessment phase**. Independence is the whole point.
-3. **Spawn check.** The Chair emits one structured line — `SPAWN: 6/6 ok | started=[...] | failed=[]` — so spawn health is visible, not inferred.
+3. **Status line.** The Chair emits one structured line — `SPAWN: 6/6 ok | started=[...] | failed=[]` — so spawn health is visible, not inferred.
 4. **Cross-correlation (Chair).** The Chair tests findings against each other for compound regulatory exposure. Missing RoPA + missing DPA + missing breach notification = full GDPR accountability failure, not three minor gaps. Cookie consent gap + analytics without lawful basis = dual e-Privacy + GDPR exposure on the same facts. High-risk AI system + no DPIA + no human oversight = AI Act + GDPR compound obligation.
 5. **Report preview + write.** The Chair posts the draft report to chat for `save` / `amend` / `discard`. On save: `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md` (outside the repo under review).
 
 **Stop early** at any phase by saying "stop the compliance panel" — the Chair stops in-flight agents, collects whatever findings are in, writes a partial report with `status: halted`.
+
+### What the plan card looks like
+
+Cards follow the marketplace's [card standard](https://github.com/sjsyrek/claude-plugins/blob/main/docs/card-standard.md). They're rendered markdown, so Claude Code draws the table borders and stacks the table on a narrow terminal. An example, for an invented product:
+
+**Compliance Panel plan** — repo root
+
+- **Scope:** repo root
+- **Budget:** ~310k tokens, ~13 min
+- **Output:** `~/.claude/compliance-panel/2026-04-14-smart-meter/report.md`
+
+| Seat | Model | Effort |
+|---|---|---|
+| gdpr-assessor | Opus | high |
+| eprivacy-assessor | Sonnet | medium |
+| nis2-assessor | Sonnet | medium |
+| ai-act-assessor | Opus | medium |
+| data-act-assessor | Opus | high |
+| bcr-assessor | Sonnet | medium |
+
+- **Why bcr-assessor:** meter readings are copied to a group affiliate outside the EEA (`config/replication.yaml`).
+
+Reply: `go` | `add <seat>` | `drop <seat>` | `narrow scope to <path>` | `abort`
+
+After spawn, one status line: `SPAWN: 6/6 ok | started=[…] | failed=[]`.
 
 ## Benefits
 

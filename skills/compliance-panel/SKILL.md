@@ -12,9 +12,9 @@ A multi-agent EU regulatory compliance review skill. Independent specialist asse
 ## What the user sees
 
 1. **Plan card.** Before any agent spawns, the Chair shows a one-screen card: scope, roster (always-on plus opt-in seats with rationale for each opt-in), per-seat model, rough token/wall-clock budget. Reply `go`, `add dpia-assessor`, `drop data-act-assessor`, `narrow scope to <path>`, or `abort`.
-2. **Spawn status.** After spawn: `SPAWN: 6/6 ok | started=[...] | failed=[]`. Spawn health visible, not inferred.
+2. **Status line.** After spawn: `SPAWN: 6/6 ok | started=[...] | failed=[]`. Spawn health visible, not inferred.
 3. **Silent assessment phase.** Assessors run in parallel with no inter-agent communication. The Chair surfaces per-agent progress notifications.
-4. **Report preview.** Before any file is written, the Chair posts the draft report to chat. Reply `save`, `amend <note>`, or `discard`.
+4. **Report preview.** Before any file is written, the Chair posts the draft report to chat, ending with `Reply:` `save` | `amend <note>` | `discard`.
 5. **Output.** Final report at `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md` (outside the repo under review).
 6. **Stop early.** Say "stop the compliance panel" at any phase — Chair stops in-flight agents, collects whatever findings are already in, writes a partial report with `status: halted` and `cancelled_at: <phase>`.
 
@@ -38,27 +38,33 @@ Regulatory exposure doesn't correlate with company size; invoke for small apps t
 
 ## Phase 0 — Plan card
 
-Before any spawn, post the following to chat. Wait for the user's reply.
+Before any spawn, post the plan card to chat and wait for the user's reply. It follows the plugin family's card standard (`standard: v1`, from `docs/card-standard.md` in the sjsyrek/claude-plugins marketplace): **rendered markdown, never inside a code fence**. Claude Code draws the table borders, and stacks the table on narrow terminals and in screen-reader mode. A fenced card shows as one tinted block of raw text. Post it in exactly this shape:
 
-```
-COMPLIANCE PANEL PLAN
-=====================
-Scope:      [repo root | path/to/subtree]
-Always-on:  gdpr-assessor, eprivacy-assessor, nis2-assessor,
-            ai-act-assessor, data-act-assessor
-Opt-in:     [list with one-line rationale per seat]
-            e.g. dpia-assessor — high-risk processing detected
-                 (large-scale special-category data in src/health/)
-            e.g. bcr-assessor — intra-group transfer to US affiliate
-                 detected in config/processors.yaml
-Models:     [one line per seat: model / effort — e.g.
-              gdpr-assessor      Opus   / high
-              eprivacy-assessor  Sonnet / medium]
-Budget:     ~Nk tokens, ~M minutes wall-clock
-Output:     ~/.claude/compliance-panel/<date>-<slug>/report.md
+**Compliance Panel plan** — <repo root, or the scope path in backticks>
 
-Reply: go | add <seat> | drop <seat> | narrow scope to <path> | abort
-```
+- **Scope:** <repo root | `path/to/subtree`>
+- **Budget:** ~<N>k tokens, ~<M> min
+- **Output:** `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md`
+
+<N> seats: <n> always-on, <n> opt-in
+
+| Seat | Model | Effort |
+|---|---|---|
+| gdpr-assessor | Opus | high |
+| eprivacy-assessor | Sonnet | medium |
+| <seat> | <Opus or Sonnet> | <effort> |
+
+- **Why <opt-in seat>:** <one line naming the detected trigger, e.g. dpia-assessor: large-scale health data in `src/health/`>
+
+Reply: `go` | `add <seat>` | `drop <seat>` | `narrow scope to <path>` | `abort`
+
+Rules that keep it rendering correctly:
+
+- Leave a blank line before and after every list and table, and before the `Reply:` line, or the line is swallowed into the table.
+- List every seat in the table, always-on first. The count line goes above the table because the roster runs past ~8 rows.
+- Put every verb, placeholder and path in backticks. Unfenced, `<seat>` can vanish as an HTML tag, and `_` turns a path into italics.
+- Draw no boxes, `=====` underlines or `───` rules. The renderer draws the table borders.
+- Give reasons and flags in words, never as an emoji or glyph alone.
 
 The plan card describes scope, seats and the reason for each opt-in — not a list of suspected gaps or "early signals", even obvious ones. Finding gaps is the assessors' job; listing suspects here pre-empts the independent assessment phase and, if they reach `recon.md`, anchors every assessor on the Chair's guesses.
 
@@ -151,11 +157,9 @@ See `references/severity-guide.md` for calibration examples per regulation. Seve
 
 ## Phase 2.5 — Spawn check
 
-Each `Agent` call returns either an agent ID or an error. Emit:
+Each `Agent` call returns either an agent ID or an error. Emit the status line as one whole-line code span (no fence, no bold, text unchanged), because graders and users grep it:
 
-```
-SPAWN: N/N ok | started=[...] | failed=[...]
-```
+`SPAWN: N/N ok | started=[...] | failed=[...]`
 
 For any failed assessor:
 - Retry once with the same role brief
@@ -188,13 +192,9 @@ Skeleton: `references/report-template.md`. Severity calibration: `references/sev
 
 **Tone.** The report should read like a briefing document handed to a COO before a regulatory touchpoint — actionable, forward-looking, prioritised. **Not** a legal threat, not a condemnation. Severity is about enforcement risk and effort to fix, not blame. The audience is a team that wants a remediation roadmap.
 
-**Preview before write.** Post the draft report to chat:
+**Preview before write.** Post the draft report to chat in the card standard's preview shape: a line `**Draft report** — <N> words, not saved yet`, then the report rendered as markdown (no code fence, no frontmatter), then `---`, then:
 
-```
-[draft report markdown]
-
-Reply: save | amend <note> | discard
-```
+Reply: `save` | `amend <note>` | `discard`
 
 On `save`: write to `~/.claude/compliance-panel/<yyyy-mm-dd>-<slug>/report.md`. On `amend`: revise per the note, re-preview. On `discard`: clean up artifacts, no file written.
 
@@ -252,7 +252,7 @@ Per-assessor methodology lives in `references/agents/<slug>.md`. **Load only whe
 
 **On the AI Act risk classifier.** The `ai-act-assessor` must run `references/ai-act-risk-classifier.md` as its first methodology step before assessing obligations. Risk tier determines which obligations apply; getting the tier wrong invalidates everything else.
 
-**On proactive triggering.** When triggered proactively (not from a user trigger phrase), the plan card includes the **proactive trigger reason** — e.g., "Detected new LLM integration in `src/ai/classifier.ts` — AI Act + GDPR exposure on automated decisioning." The user can `defer` (records as a known unaudited compliance surface, will not re-trigger on the same surface for 7 days) or `go`.
+**On proactive triggering.** When triggered proactively (not from a user trigger phrase), the plan card adds a `- **Trigger:** <reason>` bullet after Output, and `` `defer` `` joins the Reply line before `` `abort` `` — e.g. the trigger reason "Detected new LLM integration in `src/ai/classifier.ts` — AI Act + GDPR exposure on automated decisioning." The user can `defer` (records as a known unaudited compliance surface, will not re-trigger on the same surface for 7 days) or `go`.
 
 **On compound findings vs separate findings.** Three minor GDPR gaps that together create accountability failure should be one compound `blocker`, not three minors stacked. The Chair's job in Phase 3 is to see the shape that no single assessor sees.
 
