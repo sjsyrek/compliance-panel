@@ -1,6 +1,6 @@
 # Recon brief template
 
-The Chair fills out this template during Phase 1 (Recon) and writes it to `~/.claude/compliance-panel/<slug>/recon.md`. Every assessor's spawn prompt points to this path so identical reads hit the prompt cache across parallel spawns.
+The Chair fills out this template during Phase 1 (Recon) and writes it to `~/.claude/compliance-panel/<slug>/recon.md`. Every assessor's spawn prompt points to this path, so the recon is written once instead of inlined into each spawn.
 
 The recon brief is the **only shared context** across all assessors. It must be precise and bounded — anything ambiguous here becomes ambiguous in five-to-seven independent parallel contexts.
 

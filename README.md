@@ -11,7 +11,7 @@ Compliance Panel spawns each regulatory assessor as an **independent Claude agen
 ## How it works
 
 0. **Plan card (you confirm before anything spawns).** The Chair shows a one-screen card: scope, roster (always-on plus opt-in seats with rationale), per-seat model, rough token/wall-clock budget. You reply `go`, `add dpia-assessor`, `drop data-act-assessor`, `narrow scope to src/api`, or `abort`.
-1. **Recon (Chair, single context).** The Chair scans the project: processing activities, data categories, AI components, connected devices, data transfers, user base, existing compliance documentation. The recon brief lands at `~/.claude/compliance-panel/<slug>/recon.md`. Every spawn prompt points to that path so the recon hits the prompt cache across parallel assessor spawns.
+1. **Recon (Chair, single context).** The Chair scans the project: processing activities, data categories, AI components, connected devices, data transfers, user base, existing compliance documentation. The recon brief lands at `~/.claude/compliance-panel/<slug>/recon.md`. Every spawn prompt points to that path, so the Chair writes the recon once instead of inlining it into each spawn.
 2. **Assessment fan-out (parallel).** In one message the Chair spawns every selected assessor as an unnamed background subagent (`Agent(model: …, effort: …, prompt: …)`). Each receives only its own role brief and the recon — **no inter-agent communication during the assessment phase**. Independence is the whole point.
 3. **Spawn check.** The Chair emits one structured line — `SPAWN: 6/6 ok | started=[...] | failed=[]` — so spawn health is visible, not inferred.
 4. **Cross-correlation (Chair).** The Chair tests findings against each other for compound regulatory exposure. Missing RoPA + missing DPA + missing breach notification = full GDPR accountability failure, not three minor gaps. Cookie consent gap + analytics without lawful basis = dual e-Privacy + GDPR exposure on the same facts. High-risk AI system + no DPIA + no human oversight = AI Act + GDPR compound obligation.
@@ -23,7 +23,7 @@ Compliance Panel spawns each regulatory assessor as an **independent Claude agen
 
 - **Genuine independence.** Each assessor is a separate Claude with its own context — no priming bleeds between regulatory regimes. You catch gaps that a single-context reviewer (whether human or AI) would unify under one frame and miss in another.
 - **Compound-exposure discovery.** Cross-correlation finds risk patterns that exist *between* regulations, not within any single one. A minor GDPR gap and a minor e-Privacy gap on the same fact pattern is one major dual-regime exposure, not two separate minors.
-- **Cheap fan-out via prompt cache.** Recon brief written once, referenced by every spawn — identical reads hit the 5-minute prompt cache, recovering meaningful tokens on multi-assessor reviews.
+- **Recon written once.** The recon brief is a file every spawn reads, so the Chair writes it once rather than inlining it into each assessor's prompt.
 - **Clean checks are real results.** Regulations or articles the Chair explicitly reviewed and found compliant get a "Clean Checks" line in the report. Omission would be ambiguous — did the assessor check this and find nothing, or never look?
 - **Severity rooted in enforcement risk and effort to fix**, not theoretical compliance-checkbox theatre. A consent-banner reject-button buried two clicks deep is `minor` (real but low-priority exposure), not `blocker`. Cookies set before consent is `blocker` regardless of how small the app is.
 
@@ -85,7 +85,7 @@ The marketplace lives at [sjsyrek/claude-plugins](https://github.com/sjsyrek/cla
 - File-system write access to `~/.claude/compliance-panel/`
 - Read access to the project repo under review (for assessors to inspect code, config, and documentation)
 
-No external services are called. All assessment runs locally against the codebase.
+The plugin calls no external services of its own: the assessors are Claude agents in your Claude Code session, reading the codebase locally.
 
 ## Limitations & disclaimer
 

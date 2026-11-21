@@ -4,6 +4,10 @@ All notable changes to the compliance-panel plugin are documented here. The form
 
 ## [Unreleased]
 
+### Fixed
+
+- **Recon rationale and the "no external services" note.** README, `SKILL.md` and `recon-template.md` claimed the shared `recon.md` read hit the prompt cache across assessors; each assessor's prompt diverges before that read, so the real saving is the Chair writing the recon once (same correction as design-council 0.5.0). The README's "No external services are called" now says the assessors are Claude agents in your session.
+
 ## [0.2.0] — 2026-11-19
 
 ### Added

@@ -85,7 +85,7 @@ Steps:
    - **Existing documentation** — `privacy-policy.md`, `cookie-policy.md`, `dpa.md`, `ropa.md`, `dpia.md`, security policy, incident-response runbook
 3. Identify which opt-in seats apply (see triggers in roster table below).
 
-Write the brief to `~/.claude/compliance-panel/<slug>/recon.md`. Every assessor's spawn prompt points to this path so identical reads hit the prompt cache across parallel spawns.
+Write the brief to `~/.claude/compliance-panel/<slug>/recon.md`. Every assessor's spawn prompt points to this path, so you write the recon once instead of inlining it into each spawn.
 
 Brief format: see `references/recon-template.md`.
 
