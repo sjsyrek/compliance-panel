@@ -4,6 +4,8 @@ All notable changes to the compliance-panel plugin are documented here. The form
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-22
+
 ### Changed
 
 - **Cards follow the plugin family's card standard v1.** The plan card is rendered markdown instead of a fenced block with an `=====` underline: a bold `**Compliance Panel plan** — <scope>` title, bulleted bold-label fields (Scope, Budget, Output, and Trigger when proactive), a seat count line and a `Seat | Model | Effort` table holding every seat, a `Why` bullet per opt-in seat, and a final `Reply:` line of backticked verbs separated by pipes. Claude Code draws the table borders and stacks the table on narrow terminals and in screen-reader mode. The `SPAWN` status line is one whole-line code span with its text unchanged. The report preview is rendered without a fence and ends with `Reply:` `save` | `amend <note>` | `discard`. The README shows an example plan card. New layout graders in `01-trigger-plan-card` and `02-slash-scope`: `card-format`, `reply-line` and `no-boxes`. The title is always separated by an em dash, never a colon.
