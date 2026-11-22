@@ -60,6 +60,7 @@ Reply: `go` | `add <seat>` | `drop <seat>` | `narrow scope to <path>` | `abort`
 
 Rules that keep it rendering correctly:
 
+- Separate the title from its mode or scope with an em dash (`—`), never a colon or a hyphen: it's how every plugin's card reads, and the graders check it.
 - Leave a blank line before and after every list and table, and before the `Reply:` line, or the line is swallowed into the table.
 - List every seat in the table, always-on first. The count line goes above the table because the roster runs past ~8 rows.
 - Put every verb, placeholder and path in backticks. Unfenced, `<seat>` can vanish as an HTML tag, and `_` turns a path into italics.
