@@ -158,9 +158,13 @@ See `references/severity-guide.md` for calibration examples per regulation. Seve
 
 ## Phase 2.5 — Spawn check
 
-Each `Agent` call returns either an agent ID or an error. **As soon as the spawn calls return, before you read anything or wait on any result, post this status line to chat on its own.** Write it as one whole-line code span (no fence, no bold, text unchanged), because graders and users grep it:
+Each `Agent` call returns either an agent ID or an error. As soon as the spawn calls return, before you read anything or wait on any result, emit:
 
-`SPAWN: N/N ok | started=[...] | failed=[...]`
+```
+SPAWN: N/N ok | started=[...] | failed=[...]
+```
+
+Post it in chat as one line wrapped in backticks (a code span, not a fenced block), with the text exactly as above and no bold: graders and users grep it.
 
 For any failed assessor:
 - Retry once with the same role brief
